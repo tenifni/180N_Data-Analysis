@@ -1,0 +1,283 @@
+\documentclass[]{article}
+\usepackage{graphicx}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+%\renewcommand{\thesection}{\Roman{section}} 
+%\renewcommand{\thesubsection}{\thesection.\Roman{subsection}}
+
+%opening
+\title{180N Project 2: Numerical Investigation of Quantum System}
+\author{Scarlett Yu}
+
+\date{May 11, 2018}
+
+
+\begin{document}
+\maketitle
+\section{Introduction to quantum harmonic oscillator}
+In this project, we want to numerically solve the Hamiltonian of an anharmonic quantum oscillator by  diagonalizing its matrix representation in some basis, in order to approximate the true eigenvalues corresponding to the eigenvectors.
+
+\begin{equation}
+i\hbar\frac{\partial}{\partial t} |\psi \rangle =\hat{H}|\psi \rangle
+\end{equation}
+
+\subsection{Unperturbed harmonic oscillator}
+The Hamiltonian describing a unperturbed quantum harmonic oscillator in dimensionless form is:  
+\begin{equation}
+	\hat{H}_o=\frac{1}{2}(\hat{p}^2+\hat{x}^2)
+\end{equation}
+Where $\hat{x}$ and $\hat{p}$ are position and momentum operators satisfying the commutation relation:
+\begin{equation}
+	[\hat{x}, \hat{p}]=i
+\end{equation}
+To solve this Hamiltonian analytically we can define and use the following raising operator and lowering operator:
+\begin{equation}
+\hat{a}_+=\frac{1}{\sqrt{2}}(\hat{x}-i\hat{p})
+\end{equation}
+and \begin{equation}
+\hat{a}_-=\frac{1}{\sqrt{2}}(\hat{x}+i\hat{p})
+\end{equation}
+From quantum mechanics it's known that one can show that there exists an orthonormal basis  $\lbrace |0 \rangle,  |1 \rangle, ..., |n \rangle  \rbrace$ (call it $B_0$) that satisfies 
+\begin{equation}
+	\hat{a}_+|n \rangle =\sqrt{n+1}|n+1 \rangle 
+\end{equation}
+and \begin{equation}
+	\hat{a}_- |n \rangle =\sqrt{n}|n-1 \rangle 
+\end{equation}
+
+Since $\hat{H_o}=	\hat{a}_+	\hat{a}_-+\frac{1}{2}\hat{I}$, we can apply this Hamiltonian to a state $|n \rangle$ and see that:
+\begin{equation}
+	\hat{H_o}|n \rangle=(n+\frac{1}{2})|n \rangle
+\end{equation}
+Therefore, the Hamiltonian is diagonalized in basis $B_o$ and the eigenvalues for each eigenstate $|n \rangle$ is $E_n$.
+
+
+\subsection{Anharmonic oscillator}
+Now we can have some perturbation to the oscillator characterized by $\lambda >0$, and the total Hamiltonian can take the following form:
+\begin{equation}
+	\hat{H}_{\lambda}= \hat{H_o}+\lambda\hat{x}^4
+\end{equation}  
+This Hamiltonian for perturbed oscillator is hard to be diagonalizing algebraically, so instead, we will numerically approximate the eigenvectors and corresponding eignevalues.
+\section{Numerical approach to solving anharmonic oscillator}
+We first write write $\hat{H}_{\lambda}$ in terms of operators $\hat{x}$ and $\hat{p}$:
+\begin{equation}
+	\hat{H}_{\lambda}= \frac{1}{2}(\hat{p}^2+\hat{x}^2)+\lambda\hat{x}^4
+\end{equation}
+Looking at eqn (10), we want to see what $\hat{x}^2$ and $\hat{x}^4$ operators do, respectively, when applied to a state $n \rangle$.
+\subsection{Matrix representations of the $\hat{x}^2$ and $\hat{x}^4$}
+
+We can use  $\hat{a}_+$ and $\hat{a}_-$ to represent $\hat{x}$ and $\hat{p}$ by simply adding and subtracting equations (4) with (5). So from the expressions of the raising and lowering operators, we get:
+\begin{equation}
+	\hat{x}=\frac{1}{\sqrt{2}}(\hat{a}_- +\hat{a}_+)
+\end{equation}
+and 
+\begin{equation}
+\hat{p}=-\frac{i}{\sqrt{2}}(\hat{a}_- -\hat{a}_+)
+\end{equation}
+Then we can write $\hat{x}^2$ as following:
+\begin{equation}
+	\hat{x}^2=\frac{1}{2}(\hat{a}_- + \hat{a}_+)(\hat{a}_- + \hat{a}_+)	
+	= \frac{1}{2}(\hat{a}_-^2 + \hat{a}_-\hat{a}_+ + \hat{a}_+\hat{a}_-  + \hat{a}_+ ^2)
+\end{equation}
+Acting $\hat{x}^2$ on state $| n \rangle$: 
+\begin{equation}
+\hat{x}^2|n\rangle 
+	= \frac{1}{2}(\hat{a}_-^2 +  \hat{a}_-\hat{a}_+   + \hat{a}_+\hat{a}_-  + \hat{a}_+^2)|n\rangle 
+\end{equation}
+Breaking down eqn (14) to look at how each term applies, we obtain eqn (15) to (18):
+\begin{equation}
+	\hat{a}_-^2|n\rangle 
+	= \hat{a}_{-}{\sqrt{n}|n-1\rangle}
+	= \sqrt{n}\sqrt{n-1}|n-2\rangle 
+\end{equation}
+
+\begin{equation}
+\hat{a}_{+}^2|n\rangle 
+= \hat{a}_{+}{\sqrt{n+1}|n+1\rangle}
+= \sqrt{n+1}\sqrt{n+2}|n+2\rangle 
+\end{equation}
+
+
+\begin{equation}
+	\hat{a}_{-}\hat{a}_+ |n\rangle 
+= \hat{a}_{-} {\sqrt{n+1}|n+1\rangle}
+= \sqrt{n+1}\sqrt{n+1}|n\rangle 
+= (n+1)|n\rangle 
+\end{equation}
+
+\begin{equation}
+		\hat{a}_{+}\hat{a}_- |n\rangle 
+		= \hat{a}_{+} {\sqrt{n}|n-1\rangle}
+		= \sqrt{n}\sqrt{n}|n\rangle 
+		= n|n\rangle 
+\end{equation}
+Putting all the terms back together and plug them back into equation (14), we see that $\hat{a}^2$ is:
+\begin{equation}
+\hat{x}^2|n\rangle 
+= \frac{1}{2}[ \sqrt{n}\sqrt{n-1}|n-2\rangle  +  (n+1)|n\rangle   +  n|n\rangle  +  \sqrt{n+1}\sqrt{n+2}|n+2\rangle   ]
+\end{equation}
+Finally, taking inner product with $\langle m|$:
+\begin{equation}
+\langle m| \hat{x}^2 |n\rangle 
+= \frac{1}{2} \langle m| \sqrt{n}\sqrt{n-1}|n-2\rangle  +  \frac{1}{2} \langle m| (n+1)|n\rangle +  \frac{1}{2}\langle m| n|n\rangle  +  \frac{1}{2}\langle m| \sqrt{n+1}\sqrt{n+2}|n+2\rangle 
+\end{equation}
+After simplifying eqn (20), we obtain the matrix elements of $\hat{x}^2$ operator in basis $B_o$ (the quantum harmonic oscillator basis):
+\begin{equation}
+\langle m| \hat{x}^2 |n\rangle 
+=  \frac{1}{2}\sqrt{n(n-1)} \delta_{m,n-2} +(n+\frac{1}{2})\delta_{m,n}+ \frac{1}{2}\sqrt{(n+1)(n+2)} \delta_{m,n+2}
+\end{equation}
+Similarly, we can find the matrix elements of $\hat{x}^4$ in basis $B_o$. 
+\begin{equation}
+\hat{x}^4 = \frac{1}{2}(\hat{a}_{-}^2 + \hat{a}_{-}\hat{a}_{+} + \hat{a}_{+}\hat{a}_{-} + \hat{a}_{+}^2) \times \frac{1}{2}(\hat{a}_{-}^2 + \hat{a}_{-}\hat{a}_{+} + \hat{a}_{+}\hat{a}_{-} + \hat{a}_{+}^2)
+\end{equation}
+Multiplying out eqn (21), we get 
+\begin{equation}
+\begin{aligned}
+	\Rightarrow \frac{1}{4}\lbrack (\hat{a}_{-}^4 - \hat{a}_{-}^3\hat{a}_{+}- \hat{a}_{-}^2\hat{a}_{+}\hat{a}_{-}+ \hat{a}_{-}^2\hat{a}_{+}^2)
+	 +(-\hat{a}_{-}\hat{a}_{+}\hat{a}_{-}^2 + \hat{a}_{-}\hat{a}_{+}\hat{a}_{-}\hat{a}_{+} \\+\hat{a}_{-}\hat{a}_{+}^2\hat{a}_{-} - \hat{a}_{-}\hat{a}_{+}^3) + (-\hat{a}_{+}\hat{a}_{-}^3 + \hat{a}_{+}\hat{a}_{-}^2\hat{a}_{+} + \hat{a}_{+}\hat{a}_{-}\hat{a}_{+}\hat{a}_{-} \\- \hat{a}_{+}\hat{a}_{-}\hat{a}_{+}^2) 
+	+(\hat{a}_{+}^2\hat{a}_{-}^2-\hat{a}_{+}^2\hat{a}_{-}\hat{a}_{+} - \hat{a}_{+}^3\hat{a}_{-} + \hat{a}_{+}^4) | n \rangle  \rbrack
+\end{aligned}
+\end{equation}
+
+Now we can group the operators by powers and apply each term to the state:\\
+
+$\hat{a_+}^4 | n \rangle = \sqrt{n+1}\sqrt{n+2}\sqrt{n+3}\sqrt{n+4}  | n+4\rangle$
+
+$\hat{a_+}^3\hat{a_-} | n \rangle = n\sqrt{n}\sqrt{n+1}\sqrt{n+2}  | n+2\rangle$
+
+$\hat{a_+}^2\hat{a_-}^2 | n \rangle = n(n-1)  | n\rangle$
+
+$\hat{a_+}\hat{a_-}^3 | n \rangle = \sqrt{n(n-1)}(n-2)  | n-2\rangle$ 
+\\
+
+$\hat{a_-}^4 | n \rangle = \sqrt{n}\sqrt{n-1}\sqrt{n-2}\sqrt{n-3}  | n-4\rangle$
+
+$\hat{a_-}^3\hat{a_+} | n \rangle = (n+1)\sqrt{n(n-1)} | n-2\rangle$
+
+$\hat{a_-}^2\hat{a_+}^2 | n \rangle = (n+1)(n+2) |n\rangle$
+
+$\hat{a_-}\hat{a_+}^3 | n \rangle = \sqrt{n+1}\sqrt{n+2} (n+3) |n+2\rangle$\\
+
+
+$\hat{a_-}^2\hat{a_+}\hat{a_-} | n \rangle = n\sqrt{n}\sqrt{n-1} |n+2\rangle$
+
+
+$\hat{a_-}\hat{a_+}^2\hat{a_-} | n \rangle = n(n+1) |n\rangle$
+
+
+$\hat{a_+}^2\hat{a_-}\hat{a_+} | n \rangle = (n+1)\sqrt{n+1}\sqrt{n+2} |n+2\rangle$
+
+
+$\hat{a_-}\hat{a_+}\hat{a_-}^2| n \rangle = \sqrt{n(n-1)}(n-1) |n-2\rangle$
+
+$\hat{a_+}\hat{a_-}\hat{a_+}^2| n \rangle = \sqrt{n+1}\sqrt{n+2}(n+2) |n+2\rangle$
+
+$\hat{a_+}\hat{a_-}\hat{a_+}\hat{a_-}| n \rangle = n^2 |n\rangle$
+\\
+
+Finally, we plug in these terms back to eqn (23) and take the inner product with state $\langle m|$, we see that 
+\begin{equation}
+\begin{aligned}
+\langle m|\hat{x}^4|n\rangle = \\
+\frac{1}{4}(6n^2 + 6n +3)\delta_{nm} + \sqrt{(n+1)(n+2)(n+\frac{3}{2})}\delta_{n-2,m} + \sqrt{(n-1)n}(n - \frac{1}{2})\delta_{n-2,m} \\+ \frac{1}{4} \sqrt{(n+1)(n+2)(n+3)(n+4)}\delta_{n-4,m} 
++  \frac{1}{4} \sqrt{(n-3)(n-2)(n-1)}\delta_{n+4,m}	
+\end{aligned}
+\end{equation}
+This gigantic equation represents the matrix element of operator $\hat{x}^4$ in the harmonic oscillator basis, which will help us approximate the eigenvalues and eigenfunctions of anharmonic oscillator in the following parts. 
+
+
+\subsection{Numerically solving for eigenvalues of anharmonic oscillator}
+
+Using the result (eqn 24) from the last part, we constructed the matrix for $H_{\lambda}$ and used the 
+built-in eigenvalue solver \texttt{eig} from \texttt{NumPy} linear algebra library to numerically find the eigenvalues. 
+
+The first four eigenvalues of the matrix (for $\lambda=1$) are approximated to be: \texttt{0.80377, 2.73789, 5.17929, 7.94240}.
+For $\lambda=0.5$, the first four eigenvalues (energies) are approximated to be
+\texttt{0.69618, 2.32441, 4.32752, 6.5784012}.
+
+\subsection{Plotting energy $E_n(\lambda)$ as function of $\lambda$}
+Figure 1 shows the first four eigenvalues as a function of $\lambda$ as it goes from 0 to 1. At $\lambda=0$, we expected the first energy to be at 0.5 as in the unperturbed case, the second energy to be in 1.5, and so forth, which are confirmed in Figure 1. 
+\begin{figure}[h!]
+	\begin{center}   
+		\includegraphics[scale=0.6]{energyVSlambda.png}
+		\caption{First four energy levels vs $\lambda$ ( 0 $\leqslant \lambda \leqslant 1$ )} 
+	\end{center}  
+\end{figure}
+\begin{figure}[h!]
+	\begin{center}   
+		\includegraphics[scale=0.6]{spacing.png}
+		\caption{Spacing between each of the two adjacent energy levels as function of $\lambda$)} 
+	\end{center}  
+\end{figure}
+
+\subsection{Convergence of energy eigenvalues as of basis size increases}
+As we increase the basis size of the matrix, the approximated eigenvalues will approach the corresponding true eigenvalues. As a test, we plotted the lowest (most stable) energy as function of basis size N (Figure 3), and for the second lowest energy (Figure 4). The perturbation strength $\lambda =1$ in both cases. 
+In both graphs, we see the eigenvalues decays rapidly after a certain basis size (between 0 and 10), and approaches a nonzero constant.
+\begin{figure}[h!]
+	\begin{center}   
+		\includegraphics[scale=0.6]{e1convergence.png}
+		\caption{First lowest energy as a function of basis size N} 
+	\end{center}  
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{center}   
+		\includegraphics[scale=0.6]{e2convergence.png}
+		\caption{Second lowest energy as a function of basis size N} 
+	\end{center}  
+\end{figure}
+
+\subsection{Eigenfunctions of harmonic and anharmonic oscillators }
+We know the stationary states of a quantum harmonic oscillator are $\psi_n (x)=\frac{1}{\sqrt{\pi}\sqrt{2^{n}n!}} e^{-\frac{x^2}{2}} H_{n}(x)$, where $H_{n}(x)$ are the Hermite Polynomials: $H_0(x)=1$, $H_1(x)=2x$, $H_2(x)=4x^2 -2$, etc.
+
+From these, we can use the first-order wavefunction correction from perturbation theory to approximate the wavefunctions to the anharmonic oscillator to the first order.
+Figure 5 shows the first five eigenfunctions of unperturbed harmonic oscillator plotted against x. Figure 6 shows the first five eigenfunctions of an anharmonic oscillator plotted against x, for $\lambda=1$.
+\begin{figure}[h!]
+	\begin{center}   
+		\includegraphics[scale=0.7]{wavefunctionH0.png}
+		\caption{The first five wavefunctions of an unperturbed harmonic oscillator as function of x} 
+	\end{center}  
+\end{figure}
+
+
+\begin{figure}[h!]
+	\begin{center}   
+		\includegraphics[scale=0.7]{wavefunctionHlam.png}
+		\caption{The first five wavefunctions of a perturbed anharmonic oscillator, $\lambda=1$} 
+	\end{center}  
+\end{figure}
+
+\section{References}
+[1]. \url{http://physweb.bgu.ac.il/COURSES/QuantumMechCohen/ExercisesPool/EXERCISES/ex_6120_sol_Y11.pdf}
+\end{document}
+
+
+
+
+
+
+\begin{table}[htp]
+	\begin{center}
+		\begin{tabular}{ | l | l | l | p{4cm} |}
+			\hline
+			& Angle $\theta$ (deg) & Wavelength (nm) & Frequency (Hz)\\ \hline
+			Red& $23.5 \pm0.5$ & $665.91 \pm7.76$ & $4.51\pm0.51\times 10^{14}$\\ \hline
+			Green & $19.0 \pm0.5$ & $543.70 \pm6.41 $ &$5.52\pm0.45\times 10^{14}$\\ \hline
+			Blue & $16.5 \pm 0.5$ & $474.31 \pm5.57 $ & $6.33\pm 0.42\times 10^{14}$\\
+			\hline
+		\end{tabular}
+		\caption{\label{tab:table-name} Measured diffraction angles for RGB light, calculated wavelengths and frequencies.}
+	\end{center}
+\end{table}
+So first two wavefucntions are:
+\begin{equation}
+\psi_0 = \frac{1}{\sqrt{\pi}\sqrt{2^{n}n!}} e^{\frac{-x^2}{2}}
+\end{equation}
+\begin{equation}
+\psi_1 = \frac{1}{\sqrt{\pi}\sqrt{2^{n}n!}} \sqrt{2}x e^{\frac{-x^2}{2}}
+\end{equation}
+and etc. 
+
